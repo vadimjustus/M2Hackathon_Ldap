@@ -1,0 +1,11 @@
+{
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@gitlab.tdintern.de:bdf/cli-tool.git"
+        }
+    ],
+    "require-dev": {
+        "bdf/cli-tool": "1.*"
+    }
+}
