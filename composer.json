@@ -1,0 +1,23 @@
+{
+  "name": "m2hackathon/ldap",
+  "license": "OSL-3.0",
+  "type": "magento2-module",
+  "description": "LDAP auth for Magento backend",
+  "version": "0.1.0",
+  "require": {
+  },
+  "authors": [
+    {
+      "name": "Vadim Justus",
+      "email": "v.justus@techdivision.com"
+    }
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "M2Hackathon\\Ldap\\": ""
+    }
+  }
+}
