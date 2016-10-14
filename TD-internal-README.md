@@ -17,8 +17,8 @@ curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin
 
 ## Clone repository
 ```bash
-git clone git://10.0.106.114/magento2-hackathon
-cd magento2-hackathon
+git clone git@github.com:techdivision/M2Hackathon_Ldap.git
+cd M2Hackathon_Ldap
 ```
 
 ## Install dependencies
@@ -50,7 +50,7 @@ docker cp ${DOCKER_CONTAINER_NAME}:/var/www/dist ./
 gulp deploy:docker
 docker exec ${DOCKER_CONTAINER_NAME} chmod +x /var/www/dist/bin/magento
 bin/magento module:status
-bin/magento module:enable TechDivision_Hello
+bin/magento module:enable M2Hackathon_Ldap
 bin/magento setup:upgrade
 bin/magento setup:static-content:deploy
 bin/magento deploy:mode:set developer
