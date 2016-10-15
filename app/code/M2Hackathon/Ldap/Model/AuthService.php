@@ -11,9 +11,9 @@
  */
 namespace M2Hackathon\Ldap\Model;
 
-use \M2Hackathon\Ldap\Model\AuthServiceInterface;
+namespace M2Hackathon\Ldap\Model;
 
-class AuthService implements AuthServiceInterface 
+class AuthService implements AuthServiceInterface
 {
     /**
      * Configuration paths
@@ -25,7 +25,7 @@ class AuthService implements AuthServiceInterface
      * @var \Magento\Backend\App\ConfigInterface
      */
     protected $scopeConfig;
-    
+
     public function __construct(
         \Magento\Backend\App\ConfigInterface $scopeConfig,
         \Psr\Log\LoggerInterface $logger
@@ -34,21 +34,41 @@ class AuthService implements AuthServiceInterface
         $logger->info($this->getAddress());
     }
 
-    public function authenticate($userName, $password) {
-     // TODO: Implement authenticate() method.
+    /**
+     * @param String $userName
+     * @param String $password
+     * @return bool
+     * @throws \M2Hackathon\Ldap\Exception\UnknownUserException
+     */
+    public function authenticate($userName, $password)
+    {
+        $allowedUsers = array(
+            'harri', 'vadim'
+        );
+
+        if (in_array($userName, $allowedUsers)) {
+            return true;
+        }
+
+        throw new \M2Hackathon\Ldap\Exception\UnknownUserException(
+            new \Magento\Framework\Phrase('Given user is unknown.')
+        );
     }
-    
-    public function getRole($userId) {
-     // TODO: Implement getRole() method.
+
+    public function getRole($userId)
+    {
+        // TODO: Implement getRole() method.
     }
-    
-    protected function getAddress() {
+
+    protected function getAddress()
+    {
         $storeScope = \Magento\Store\Model\ScopeInterface::SCOPE_STORE;
-        
+
         return $this->scopeConfig->getValue(self::XML_CONFIG_LDAP_ADDRESS, $storeScope);
     }
-    
-    protected function getPort() {
+
+    protected function getPort()
+    {
         $storeScope = \Magento\Store\Model\ScopeInterface::SCOPE_STORE;
 
         return $this->scopeConfig->getValue(self::XML_CONFIG_LDAP_ADDRESS, $storeScope);

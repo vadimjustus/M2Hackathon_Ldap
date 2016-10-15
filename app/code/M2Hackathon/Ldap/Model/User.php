@@ -57,15 +57,22 @@ class User extends \Magento\User\Model\User
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
-        $this->_encryptor = $encryptor;
-        parent::__construct($context, $registry, $resource, $resourceCollection, $data);
-        $this->_userData = $userData;
-        $this->_config = $config;
-        $this->_validatorObject = $validatorObjectFactory;
-        $this->_roleFactory = $roleFactory;
-        $this->_transportBuilder = $transportBuilder;
-        $this->_storeManager = $storeManager;
-        $this->validationRules = $validationRules;
+        parent::__construct(
+            $context,
+            $registry,
+            $userData,
+            $config,
+            $validatorObjectFactory,
+            $roleFactory,
+            $transportBuilder,
+            $encryptor,
+            $storeManager,
+            $validationRules,
+            $resource,
+            $resourceCollection,
+            $data
+        );
+
         $this->authService = $authService;
     }
 
@@ -94,7 +101,7 @@ class User extends \Magento\User\Model\User
             );
 
             $result = $this->getAuthService()->authenticate($username, $password);
-            
+
             // TODO: load the user data from ldap server
             $this->loadByUsername('admin');
 
@@ -102,10 +109,10 @@ class User extends \Magento\User\Model\User
                 'admin_user_authenticate_after',
                 ['username' => $username, 'password' => $password, 'user' => $this, 'result' => $result]
             );
+
+            return $result;
         } catch (UnknownUserException $exception) {
             return parent::authenticate($username, $password);
         }
-
-        return $result;
     }
 }

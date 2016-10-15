@@ -13,9 +13,6 @@
  * @link      http://www.techdivision.com
  */
 
-/**
- * AuthInterface
- */
 namespace M2Hackathon\Ldap\Model;
 
 interface AuthServiceInterface
