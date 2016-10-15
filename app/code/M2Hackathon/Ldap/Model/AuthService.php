@@ -9,6 +9,7 @@
  * To obtain a valid license for using this software please contact us at
  * license@techdivision.com
  */
+namespace M2Hackathon\Ldap\Model;
 
 use \M2Hackathon\Ldap\Model\AuthServiceInterface;
 
