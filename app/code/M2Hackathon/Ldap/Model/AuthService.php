@@ -11,8 +11,6 @@
  */
 namespace M2Hackathon\Ldap\Model;
 
-namespace M2Hackathon\Ldap\Model;
-
 class AuthService implements AuthServiceInterface
 {
     /**
@@ -20,6 +18,8 @@ class AuthService implements AuthServiceInterface
      */
     const XML_CONFIG_LDAP_ADDRESS = 'admin/ldap/address';
     const XML_CONFIG_LDAP_PORT = 'admin/ldap/port';
+    
+    protected $connection;
 
     /**
      * @var \Magento\Backend\App\ConfigInterface
@@ -28,8 +28,11 @@ class AuthService implements AuthServiceInterface
 
     public function __construct(
         \Magento\Backend\App\ConfigInterface $scopeConfig,
-        \Psr\Log\LoggerInterface $logger
+        \Psr\Log\LoggerInterface $logger,
+        \M2Hackathon\Ldap\Model\Connection\ConnectionInterface $connection
     ) {
+        $this->connection = $connection;
+        
         $this->scopeConfig = $scopeConfig;
         $logger->info($this->getAddress());
     }
@@ -42,6 +45,7 @@ class AuthService implements AuthServiceInterface
      */
     public function authenticate($userName, $password)
     {
+        //$this->connection->authenticate($userName, $password);
         $allowedUsers = array(
             'harri', 'vadim'
         );
@@ -58,19 +62,5 @@ class AuthService implements AuthServiceInterface
     public function getRole($userId)
     {
         // TODO: Implement getRole() method.
-    }
-
-    protected function getAddress()
-    {
-        $storeScope = \Magento\Store\Model\ScopeInterface::SCOPE_STORE;
-
-        return $this->scopeConfig->getValue(self::XML_CONFIG_LDAP_ADDRESS, $storeScope);
-    }
-
-    protected function getPort()
-    {
-        $storeScope = \Magento\Store\Model\ScopeInterface::SCOPE_STORE;
-
-        return $this->scopeConfig->getValue(self::XML_CONFIG_LDAP_ADDRESS, $storeScope);
     }
 }

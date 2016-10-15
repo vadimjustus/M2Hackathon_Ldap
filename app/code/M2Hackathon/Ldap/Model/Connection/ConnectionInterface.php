@@ -11,4 +11,7 @@ interface ConnectionInterface
 {
     
     public function search($filter, $characteristics);
+    
+    public function authenticate($name,$password);
+    
 }
