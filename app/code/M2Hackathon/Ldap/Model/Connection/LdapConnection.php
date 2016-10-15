@@ -14,8 +14,10 @@ class LdapConnection implements ConnectionInterface
     /**
      * Constants to load configuration and defined default port.
      */
-    const XML_CONFIG_LDAP_ADDRESS = 'admin/ldap/address';
+    const XML_CONFIG_LDAP_ENABLE = 'admin/ldap/enable';
+    const XML_CONFIG_LDAP_HOST = 'admin/ldap/host';
     const XML_CONFIG_LDAP_PORT = 'admin/ldap/port';
+    const XML_CONFIG_LDAP_USER = 'admin/ldap/user';
     const XML_CONFIG_LDAP_DN = 'admin/ldap/baseDn';
     const DEFAULT_PORT = '389';
 
@@ -30,7 +32,7 @@ class LdapConnection implements ConnectionInterface
      * 
      * @var resource
      */
-    private $connection;
+    private $connection = null;
     
     protected $scopeConfig;
     protected $logger;
@@ -48,8 +50,16 @@ class LdapConnection implements ConnectionInterface
     {
         $this->scopeConfig = $scopeConfig;
         $this->logger = $logger;
+
+        $options = array(
+            'host'              => $this->getHost(),
+            'port'              => $this->getPort(),
+            'bindRequiresDn'    => true,
+            'username'          => $this->getUser(),
+            'baseDn'            => $this->getBaseDs(),
+        );
         
-        $this->connection = ldap_connect($this->getAddress() . ':' . $this->getPort());
+        $this->connection = new \Zend_Ldap($options);
     }
 
     /**
@@ -60,10 +70,11 @@ class LdapConnection implements ConnectionInterface
      */
     public function search($filter, $characteristics = null)
     {
-        $login = ldap_bind($this->connection);
-        $searchResult = ldap_search($this->connection, $this->getBaseDs(), $filter, $characteristics);
+        $this->connection->bind();
+
+        $searchResult = ldap_search($this->getConnection(), $this->getBaseDs(), $filter, $characteristics);
         
-        $result = ldap_get_entries($this->connection, $searchResult);
+        $result = ldap_get_entries($this->getConnection(), $searchResult);
         
         $this->logger->info($result);
     }
@@ -77,23 +88,39 @@ class LdapConnection implements ConnectionInterface
      */
     public function authenticate($name, $password)
     {
-        $result = ldap_compare($this->connection, self::CONFIG_NAME_DS . $name . ',', 
-            $this->getBaseDs(), self::CONFIG_PASSWOR_attribute, $password);
-
-        if ($result === -1) {
-            $this->logger->debug(ldap_err2str());
-        }
-
-        return $result;
+        $acctname = $this->connection->getCanonicalAccountName(
+            $name, \Zend_Ldap::ACCTNAME_FORM_USERNAME
+        );
+        
+        $this->logger->notice($acctname);
     }
 
-
-    protected function getAddress() {
+    /**
+     * Check if the module is enabled.
+     * 
+     * @return boolean
+     */
+    protected function getModuleEnabled() {
         $storeScope = \Magento\Store\Model\ScopeInterface::SCOPE_STORE;
 
-        return $this->scopeConfig->getValue(self::XML_CONFIG_LDAP_ADDRESS, $storeScope);
+        return $this->scopeConfig->getValue(self::XML_CONFIG_LDAP_ENABLE, $storeScope);
+    }
+    /**
+     * Get Address to Ldap Server.
+     * 
+     * @return String
+     */
+    protected function getHost() {
+        $storeScope = \Magento\Store\Model\ScopeInterface::SCOPE_STORE;
+
+        return $this->scopeConfig->getValue(self::XML_CONFIG_LDAP_HOST, $storeScope);
     }
 
+    /**
+     * Get Ldap Port.
+     * 
+     * @return String
+     */
     protected function getPort() {
         $storeScope = \Magento\Store\Model\ScopeInterface::SCOPE_STORE;
         $port = $this->scopeConfig->getValue(self::XML_CONFIG_LDAP_PORT, $storeScope);
@@ -104,10 +131,26 @@ class LdapConnection implements ConnectionInterface
 
         return $port;
     }
-    
+
+    /**
+     * Get Base Distinguished Names.
+     * 
+     * @return String
+     */
     protected function getBaseDs() {
         $storeScope = \Magento\Store\Model\ScopeInterface::SCOPE_STORE;
         $baseDs = $this->scopeConfig->getValue(self::XML_CONFIG_LDAP_DN, $storeScope);
+
+        return $baseDs;
+    }
+    /**
+     * Get Base Distinguished Names.
+     *
+     * @return String
+     */
+    protected function getUser() {
+        $storeScope = \Magento\Store\Model\ScopeInterface::SCOPE_STORE;
+        $baseDs = $this->scopeConfig->getValue(self::XML_CONFIG_LDAP_USER, $storeScope);
 
         return $baseDs;
     }
