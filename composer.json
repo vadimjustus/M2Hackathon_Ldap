@@ -1,4 +1,8 @@
 {
+    "name": "m2hackathon/ldap",
+    "description": "LDAP auth for Magento 2 backend login",
+    "type": "magento2-module",
+    "version": "0.1.0",
     "repositories": [
         {
             "type": "vcs",
@@ -12,5 +16,16 @@
     },
     "require-dev": {
         "bdf/cli-tool": "1.*"
+    },
+    "license": [
+        "OSL-3.0"
+    ],
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "M2Hackathon\\Ldap\\": ""
+        }
     }
 }
