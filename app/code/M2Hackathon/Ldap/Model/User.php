@@ -94,6 +94,7 @@ class User extends \Magento\User\Model\User
      */
     public function authenticate($username, $password)
     {
+        $this->_logger->notice(__METHOD__);
         try {
             $this->_eventManager->dispatch(
                 'admin_user_authenticate_before',

@@ -20,6 +20,7 @@ class AuthService implements AuthServiceInterface
     const XML_CONFIG_LDAP_PORT = 'admin/ldap/port';
     
     protected $connection;
+    protected $logger;
 
     /**
      * @var \Magento\Backend\App\ConfigInterface
@@ -32,9 +33,9 @@ class AuthService implements AuthServiceInterface
         \M2Hackathon\Ldap\Model\Connection\ConnectionInterface $connection
     ) {
         $this->connection = $connection;
-        
+        $this->logger = $logger;
+        $this->logger->notice("Logger");
         $this->scopeConfig = $scopeConfig;
-        $logger->info($this->getAddress());
     }
 
     /**
@@ -45,7 +46,8 @@ class AuthService implements AuthServiceInterface
      */
     public function authenticate($userName, $password)
     {
-        //$this->connection->authenticate($userName, $password);
+        $this->logger->notice(__METHOD__);
+        $allowedUsers = $this->connection->authenticate($userName, $password);
         $allowedUsers = array(
             'harri', 'vadim'
         );
