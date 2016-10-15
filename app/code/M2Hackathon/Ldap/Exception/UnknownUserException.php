@@ -1,4 +1,5 @@
 <?php
+
 /** NOTICE OF LICENSE
  *
  * This source file is subject to the Open Software License (OSL 3.0)
@@ -13,27 +14,11 @@
  * @link      http://www.techdivision.com
  */
 
-/**
- * AuthInterface
- */
-namespace M2Hackathon\Ldap\Model;
+namespace M2Hackathon\Ldap\Exception;
 
-interface AuthServiceInterface
+use Magento\Framework\Exception\AuthenticationException;
+
+class UnknownUserException extends AuthenticationException
 {
-    /**
-     * Authenticate if an User is allowed to login.
-     *
-     * @param String $userName
-     * @param String $password
-     * @return bool
-     */
-    public function authenticate($userName, $password);
 
-    /**
-     * Get the Role for the given User by Id.
-     *
-     * @param int $userId
-     * @return int
-     */
-    public function getRole($userId);
 }

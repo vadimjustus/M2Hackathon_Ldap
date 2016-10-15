@@ -15,10 +15,16 @@
 
 namespace M2Hackathon\Ldap\Model;
 
+use M2Hackathon\Ldap\Exception\UnknownUserException;
 use Magento\User\Model\UserValidationRules;
 
 class User extends \Magento\User\Model\User
 {
+    /**
+     * @var \M2Hackathon\Ldap\Model\AuthServiceInterface
+     */
+    protected $authService;
+
     /**
      * @param \Magento\Framework\Model\Context $context
      * @param \Magento\Framework\Registry $registry
@@ -46,6 +52,7 @@ class User extends \Magento\User\Model\User
         \Magento\Framework\Encryption\EncryptorInterface $encryptor,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         UserValidationRules $validationRules,
+        \M2Hackathon\Ldap\Model\AuthServiceInterface $authService,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
@@ -59,6 +66,15 @@ class User extends \Magento\User\Model\User
         $this->_transportBuilder = $transportBuilder;
         $this->_storeManager = $storeManager;
         $this->validationRules = $validationRules;
+        $this->authService = $authService;
+    }
+
+    /**
+     * @return AuthServiceInterface
+     */
+    protected function getAuthService()
+    {
+        return $this->authService;
     }
 
     /**
@@ -71,19 +87,24 @@ class User extends \Magento\User\Model\User
      */
     public function authenticate($username, $password)
     {
-        $this->_eventManager->dispatch(
-            'admin_user_authenticate_before',
-            ['username' => $username, 'user' => $this]
-        );
+        try {
+            $this->_eventManager->dispatch(
+                'admin_user_authenticate_before',
+                ['username' => $username, 'user' => $this]
+            );
 
-        // TODO: manipulate user model resource
-        $this->loadByUsername('admin');
-        $result = true;
+            $result = $this->getAuthService()->authenticate($username, $password);
+            
+            // TODO: load the user data from ldap server
+            $this->loadByUsername('admin');
 
-        $this->_eventManager->dispatch(
-            'admin_user_authenticate_after',
-            ['username' => $username, 'password' => $password, 'user' => $this, 'result' => $result]
-        );
+            $this->_eventManager->dispatch(
+                'admin_user_authenticate_after',
+                ['username' => $username, 'password' => $password, 'user' => $this, 'result' => $result]
+            );
+        } catch (UnknownUserException $exception) {
+            return parent::authenticate($username, $password);
+        }
 
         return $result;
     }

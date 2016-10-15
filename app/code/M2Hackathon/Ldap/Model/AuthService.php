@@ -13,7 +13,7 @@
  * @link      http://www.techdivision.com
  */
 
-use \M2Hackathon\Ldap\Services\AuthServiceInterface;
+use \M2Hackathon\Ldap\Model\AuthServiceInterface;
 
 class AuthService implements AuthServiceInterface 
 {
