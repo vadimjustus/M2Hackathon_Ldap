@@ -19,4 +19,6 @@
     <preference for="Magento\Backend\Model\Auth\Credential\StorageInterface" type="M2Hackathon\Ldap\Model\User" />
     <!-- There are direct usages of this class in Magento core code -->
     <preference for="Magento\User\Model\User" type="M2Hackathon\Ldap\Model\User" />
+    <!-- Define LDAP service model -->
+    <preference for="M2Hackathon\Ldap\Model\AuthServiceInterface" type="M2Hackathon\Ldap\Model\AuthService" />
 </config>
