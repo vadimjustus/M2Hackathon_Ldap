@@ -13,7 +13,7 @@
 /**
  * AuthInterface
  */
-namespace M2Hackathon\Ldap\Services;
+namespace M2Hackathon\Ldap\Model;
 
 interface AuthServiceInterface
 {

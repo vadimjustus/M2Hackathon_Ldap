@@ -10,17 +10,19 @@
  * license@techdivision.com
  */
 
-use \M2Hackathon\Ldap\Services\AuthServiceInterface;
+use \M2Hackathon\Ldap\Model\AuthServiceInterface;
 
 class AuthService implements AuthServiceInterface 
 {
     const XML_CONFIG_LDAP_ADDRESS = 'admin/ldap/address';
     const XML_CONFIG_LDAP_PORT = 'admin/ldap/port';
-    protected $scopConfig;
+    protected $scopeConfig;
     
-    public function __construct(\Magento\Backend\App\ConfigInterface $scopConfig)
+    public function __construct(\Magento\Backend\App\ConfigInterface $scopeConfig,
+                                \Psr\Log\LoggerInterface $logger)
     {
-        $this->scopConfig = $scopConfig;
+        $this->scopeConfig = $scopeConfig;
+        $logger->info($this->getAddress());
     }
 
     public function authenticate($userName, $password) {
@@ -32,14 +34,14 @@ class AuthService implements AuthServiceInterface
     }
     
     protected function getAddress() {
-        $storeScop = \Magento\Store\Model\ScopeInterface::SCOPE_STORE;
+        $storeScope = \Magento\Store\Model\ScopeInterface::SCOPE_STORE;
         
-        return $this->scopConfig->getValue(self::XML_CONFIG_LDAP_ADDRESS, $storeScop);
+        return $this->scopeConfig->getValue(self::XML_CONFIG_LDAP_ADDRESS, $storeScope);
     }
     
     protected function getPort() {
-        $storeScop = \Magento\Store\Model\ScopeInterface::SCOPE_STORE;
+        $storeScope = \Magento\Store\Model\ScopeInterface::SCOPE_STORE;
 
-        return $this->scopConfig->getValue(self::XML_CONFIG_LDAP_ADDRESS, $storeScop);
+        return $this->scopeConfig->getValue(self::XML_CONFIG_LDAP_ADDRESS, $storeScope);
     }
 }
